@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantilla/template :: head">
+
+</head>
+<body>
+<header th:replace="plantilla/template :: header"></header>
+<div class="container">
+    <h1 th:text="${titulo}"></h1>
+</div>
+<div class="container">
+    <a class="btn btn-primary btn-sm" th:href="@{/views/flowers/save}" th:text="'Nueva Flor'" title="Crear nueva Flor"></a>
+
+    <table class="table">
+        <thead class="thread-dark">
+        <tr>
+            <th scope="col">#ID</th>
+            <th scope="col">Nombre Flor</th>
+            <th scope="col">Nombre Pais</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Editar</th>
+            <th scope="col">Eliminar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="fl:${flowers}">
+            <th scope="row" th:text="${fl.pk_FlorID}"></th>
+            <td th:text="${fl.nameFlor}"></td>
+            <td th:text="${fl.paisFlor}"></td>
+            <td th:text="${fl.tipoFlor}"></td>
+            <td>
+                <a class="btn btn-success btn-sm" th:href="@{/views/flowers/edit/} + ${fl.pk_FlorID}"
+                   th:text="'Editar'" title="Editar registro"></a>
+            </td>
+            <td>
+                <a class="btn btn-danger btn-sm" th:href="@{/views/flowers/delete/} + ${fl.pk_FlorID}"
+                   th:text="'Eliminar'" title="Eliminar registro"
+                   onclick="return confirm('¿Estás seguro de que deseas eliminar esta flor?');"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<footer th:replace="plantilla/template :: footer"></footer>
+</body>
+</html>
