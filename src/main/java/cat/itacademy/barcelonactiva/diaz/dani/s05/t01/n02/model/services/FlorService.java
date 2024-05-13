@@ -3,6 +3,10 @@ package cat.itacademy.barcelonactiva.diaz.dani.s05.t01.n02.model.services;
 import cat.itacademy.barcelonactiva.diaz.dani.s05.t01.n02.model.dto.FlorDTO;
 import cat.itacademy.barcelonactiva.diaz.dani.s05.t01.n02.model.domain.Flor;
 import cat.itacademy.barcelonactiva.diaz.dani.s05.t01.n02.model.repository.FlorRepository;
+import cat.itacademy.barcelonactiva.diaz.dani.s05.t01.n02.model.services.exceptions.FlorList;
+import cat.itacademy.barcelonactiva.diaz.dani.s05.t01.n02.model.services.exceptions.FlorNoCreada;
+import cat.itacademy.barcelonactiva.diaz.dani.s05.t01.n02.model.services.exceptions.FlorNoID;
+import cat.itacademy.barcelonactiva.diaz.dani.s05.t01.n02.model.services.exceptions.FlorNula;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +21,11 @@ public class FlorService implements IFlorService {
 
     @Override
     public FlorDTO addFlower(Flor flor) {
-        return convertToDTO(florRepository.save(flor));
+        try {
+            return convertToDTO(florRepository.save(flor));
+        } catch (Exception e) {
+            throw new FlorNoCreada();
+        }
     }
 
 
@@ -26,41 +34,61 @@ public class FlorService implements IFlorService {
         if (flor.getPk_FlorID() == null) {
             return addFlower(flor);
         } else {
-            Optional<Flor> optionalFlor = florRepository.findById(flor.getPk_FlorID());
-            Flor updateFlor = optionalFlor.get();
-            updateFlor.setPk_FlorID(flor.getPk_FlorID());
-            updateFlor.setNameFlor(flor.getNameFlor());
-            updateFlor.setPaisFlor(flor.getPaisFlor());
-            return convertToDTO(florRepository.save(updateFlor));
+            try {
+                Optional<Flor> optionalFlor = florRepository.findById(flor.getPk_FlorID());
+                Flor updateFlor = optionalFlor.get();
+                updateFlor.setPk_FlorID(flor.getPk_FlorID());
+                updateFlor.setNameFlor(flor.getNameFlor());
+                updateFlor.setPaisFlor(flor.getPaisFlor());
+                return convertToDTO(florRepository.save(updateFlor));
+            } catch (Exception e) {
+                throw new FlorNula();
+            }
         }
     }
 
     @Override
     public boolean deleteFlower(Integer id) {
-        Optional<Flor> optionalFlor = florRepository.findById(id);
-        if (optionalFlor.isPresent()) {
-            florRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
+        try {
+            Optional<Flor> optionalFlor = florRepository.findById(id);
+            if (optionalFlor.isPresent()) {
+                florRepository.deleteById(id);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw new FlorNoID(id);
         }
     }
 
     @Override
     public FlorDTO getOneFlowerDTO(Integer id) {
-        return convertToDTO(florRepository.findById(id).orElse(null));
+        try {
+            return convertToDTO(florRepository.findById(id).orElse(null));
+        } catch (Exception e) {
+            throw new FlorNoID(id);
+        }
     }
 
     @Override
     public Flor getOneFlower(Integer id) {
-        return florRepository.findById(id).orElse(null);
+        try {
+            return florRepository.findById(id).orElse(null);
+        } catch (Exception e) {
+            throw new FlorNoID(id);
+        }
     }
 
     @Override
     public List<FlorDTO> getAllFlowers() {
-        List<Flor> florList = florRepository.findAll();
-        List<FlorDTO> florDTOList = florList.stream().map(this::convertToDTO).toList();
-        return florDTOList;
+        try {
+            List<Flor> florList = florRepository.findAll();
+            List<FlorDTO> florDTOList = florList.stream().map(this::convertToDTO).toList();
+            return florDTOList;
+        } catch (Exception e) {
+            throw new FlorList();
+        }
     }
 
     private  FlorDTO convertToDTO(Flor flor) {

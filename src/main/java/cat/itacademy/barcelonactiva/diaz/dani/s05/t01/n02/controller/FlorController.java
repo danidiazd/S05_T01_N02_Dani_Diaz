@@ -25,7 +25,7 @@ public class FlorController {
 
     @Operation(summary = "List Flowers",
             description = "This method retrieves a list of all flowers.")
-    @GetMapping({"/",""})
+    @GetMapping({"/", ""})
     public String listFlower(Model model) {
         List<FlorDTO> florDTOList = florService.getAllFlowers();
         model.addAttribute("titulo", "Lista Flores");
