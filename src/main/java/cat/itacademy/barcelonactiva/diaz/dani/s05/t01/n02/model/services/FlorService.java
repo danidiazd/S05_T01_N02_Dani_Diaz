@@ -23,7 +23,7 @@ public class FlorService implements IFlorService {
     public FlorDTO addFlower(Flor flor) {
         try {
             return convertToDTO(florRepository.save(flor));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new FlorNoCreada();
         }
     }
@@ -41,7 +41,7 @@ public class FlorService implements IFlorService {
                 updateFlor.setNameFlor(flor.getNameFlor());
                 updateFlor.setPaisFlor(flor.getPaisFlor());
                 return convertToDTO(florRepository.save(updateFlor));
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 throw new FlorNula();
             }
         }
@@ -57,7 +57,7 @@ public class FlorService implements IFlorService {
             } else {
                 return false;
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new FlorNoID(id);
         }
     }
@@ -75,7 +75,7 @@ public class FlorService implements IFlorService {
     public Flor getOneFlower(Integer id) {
         try {
             return florRepository.findById(id).orElse(null);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new FlorNoID(id);
         }
     }
@@ -86,7 +86,7 @@ public class FlorService implements IFlorService {
             List<Flor> florList = florRepository.findAll();
             List<FlorDTO> florDTOList = florList.stream().map(this::convertToDTO).toList();
             return florDTOList;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new FlorList();
         }
     }
